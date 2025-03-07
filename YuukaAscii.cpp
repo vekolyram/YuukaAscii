@@ -57,7 +57,7 @@ int main()
 		cout << ss.str() << endl;
 	}
 	for (auto& line : lines) {
-		//cout << line << endl;
+		cout << line << endl;
 	}
 	free(idata);
 	return 0;
