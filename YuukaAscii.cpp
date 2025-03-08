@@ -23,21 +23,23 @@ int main()
 		asciiMap[i] = asciistr[i];
 		cout << asciiMap[i] << endl;
 	}
-	unsigned char* idata = stbi_load("./yuukaquarter.png", &iw, &ih, &n, 0);
+	unsigned char* idata = stbi_load("./yuukas/CH018435.png", &iw, &ih, &n, 0);
 	getTerminalSize(termW, termH);
 	while (termW <= iw && termH <= ih) {
 		cout << "\033[2J\033[1;1H";
 		cout << "waiting for size" << termW << "x" << termH << endl;
 		cout << "waiting for size" << iw << "x" << ih << endl;
 		getTerminalSize(termW, termH);
-		Sleep(1000);
+		Sleep(100);
 	}
 	unsigned bytePerPixel = n;
 	std::vector<std::string> lines;
 	lines.resize(ih);
-
 	for (int y = 0;y < ih;y++)
 	{
+		char lastChar = ' ';
+		int spaceCounter = 0;
+		bool spaceRelease = false;
 		stringstream ss;
 		for (int x = 0;x < iw;x++)
 		{
@@ -46,15 +48,34 @@ int main()
 			unsigned char g = pixelOffset[1];
 			unsigned char b = pixelOffset[2];
 			unsigned char a = n >= 4 ? pixelOffset[3] : 0xff;
+			char c = asciiMap[rgb2b(r, g, b)];
 			if (a > 128) {
-				ss << "\033[38;2;" << (int)r << ";" << (int)g << ";" << (int)b << "m" << asciiMap[(int)rgb2b(r, g, b)];
+				if (spaceCounter > 0) {
+					for (int i = 0;i < spaceCounter;i += 1) {
+						ss << ' ';
+					}
+					spaceCounter = 0;
+				}
+				ss << "\033[38;2;" << (int)r << ";" << (int)g << ";" << (int)b << "m" << c;
+				/*if (x % (iw / 100) == 0 && !lastChar) {
+					ss << lastChar;
+				}
+				else if (x % (iw / 100) == 0 && lastChar) {
+					spaceRelease = true;
+				}
+				else if (spaceRelease) {
+					spaceRelease = false;
+					ss << lastChar;
+				}
+				lastChar = '\\';*/
 			}
 			else {
-				ss << " ";
+				/*ss << " ";*/
+				spaceCounter++;
+				lastChar = ' ';
 			}
 		}
 		lines[y] = ss.str();
-		cout << ss.str() << endl;
 	}
 	for (auto& line : lines) {
 		cout << line << endl;
