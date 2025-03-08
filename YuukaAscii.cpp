@@ -23,7 +23,7 @@ int main()
 		asciiMap[i] = asciistr[i];
 		cout << asciiMap[i] << endl;
 	}
-	unsigned char* idata = stbi_load("./yuukas/yuuka28.png", &iw, &ih, &n, 0);
+	unsigned char* idata = stbi_load("./yuukas/yuuka25.png", &iw, &ih, &n, 0);
 	getTerminalSize(termW, termH);
 	while (termW <= iw && termH <= ih) {
 		cout << "\033[2J\033[1;1H";
