@@ -8,34 +8,44 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #include "YuukaAscii.h"
-
 int iw, ih, n, termW, termH;
+/*
+*/
 using namespace std;
 static int rgb2b(unsigned char r, unsigned char g, unsigned char b) {
 	return round(max(max(r, g), b) / 25.5f);
 }
 int main()
 {
-	printf("Hello World!\n");
 	map<int, char> asciiMap = {};
 	string asciistr = " -!~*?%#&[$";
+	string size = "5", img = "yuuka";
 	for (int i = 0;i <= 10;i += 1) {
 		asciiMap[i] = asciistr[i];
-		cout << asciiMap[i] << endl;
 	}
-	unsigned char* idata = stbi_load("./yuukas/5/yuuka5.png", &iw, &ih, &n, 0);
+	int sizeInput = 0, imgInput = 0;
+	cout << "Input img size and enter(5half,5,10,15,35,o):" << endl;
+	cin >> size;
+	cout << "Input yuuka img and enter(yuuka,CH0184,CH0284,NP0109):" << endl;
+	cin >> img;
+	string path = "./yuukas/" + size + "/" + img + size + ".png";
+	unsigned char* idata = stbi_load(path.c_str(), &iw, &ih, &n, 0);
 	getTerminalSize(termW, termH);
-	while (termW <= iw && termH <= ih) {
+	cout << "Font height 0.6 for best.\nTry to resize your console if you used Windows Terminal and your fontsize was small" << endl;
+	getchar();
+	do {
 		clearScreen();
-		cout << "waiting for size" << termW << "x" << termH << endl;
-		cout << "waiting for size" << iw << "x" << ih << endl;
-		cout << "font height 0.6 for best" << endl;
+		cout << "Wait for the console size to adjust to the yuuka image size;" << endl;
+		cout << "Current:" << termW << "x" << termH << endl;
+		cout << "Yuuka img:" << iw << "x" << ih << endl;
 		getTerminalSize(termW, termH);
 		Sleep(100);
-	}
+	} while (termW <= iw && termH <= ih);
+
 	unsigned bytePerPixel = n;
-	std::vector<std::string> lines;
+	vector<string> lines;
 	lines.resize(ih);
+	clearScreen();
 	for (int y = 0;y < ih;y++)
 	{
 		char lastChar = ' ';
@@ -58,20 +68,8 @@ int main()
 					spaceCounter = 0;
 				}
 				ss << "\033[38;2;" << (int)r << ";" << (int)g << ";" << (int)b << "m" << c;
-				/*if (x % (iw / 100) == 0 && !lastChar) {
-					ss << lastChar;
-				}
-				else if (x % (iw / 100) == 0 && lastChar) {
-					spaceRelease = true;
-				}
-				else if (spaceRelease) {
-					spaceRelease = false;
-					ss << lastChar;
-				}
-				lastChar = '\\';*/
 			}
 			else {
-				/*ss << " ";*/
 				spaceCounter++;
 				lastChar = ' ';
 			}
@@ -82,5 +80,7 @@ int main()
 		cout << line << endl;
 	}
 	free(idata);
+	getchar();
+	getchar();
 	return 0;
 }
